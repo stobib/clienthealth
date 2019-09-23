@@ -25,7 +25,7 @@
         * Group Policy failes to update regisTry.pol
         * Pending reboot blocking updates from installing
         * ConfigMgr Client Update Handler is working correctly with regisTry.pol
-        * Windows Update Agent not working correctly, causing client not to receive patches.
+        * Windows Update Agent not working correctly, cB01ing client not to receive patches.
         * Windows Update Agent missing patches that fixes known bugs.
 .NOTES 
     You should run this with at least local administrator rights. It is recommended to run this script under the SYSTEM context.
@@ -73,18 +73,18 @@ Begin{
         }
         If($Octet_1-eq10){
             If(($Octet_2-eq118)-or($Octet_2-eq119)){
-                $SiteServer="w16asccmdb01.inf.utshare.local"
-                $SiteCode="DFW"
+                $SiteServer="w19sccmdba01.inf.utshare.local"
+                $SiteCode="A01"
             }
             If(($Octet_2-eq126)-or($Octet_2-eq127)){
-                $SiteServer="w16bsccmdb01.inf.utshare.local"
-                $SiteCode="AUS"
+                $SiteServer="w19sccmdbb01.inf.utshare.local"
+                $SiteCode="B01"
             }
         }
     }
     If(($SiteServer-eq$null)-or($SiteCode-eq$null)){
-        Set-Variable -Name SiteServer -Value "w16asccmdb01.inf.utshare.local"
-        Set-Variable -Name SiteCode -Value "DFW"
+        Set-Variable -Name SiteServer -Value "w19sccmdba01.inf.utshare.local"
+        Set-Variable -Name SiteCode -Value "A01"
     }
     Set-Location -Path "$env:SystemRoot\System32"
     If(!(Test-Path "$env:SystemRoot\System32\cmtrace.exe")){
@@ -1615,7 +1615,7 @@ Begin{
             Write-Output $text
         }ElseIf($StartupType -like "Automatic(Delayed Start)"){
             # Handle Automatic Trigger Start the dirty way for these two services. Implement in a nice way in future version.
-            If((($name-eq"wuauserv")-or($name-eq"W32Time"))-and(($OSName -like "Windows 10*")-or($OSName -like "*Server 2016*"))){
+            If((($name-eq"wuB01erv")-or($name-eq"W32Time"))-and(($OSName -like "Windows 10*")-or($OSName -like "*Server 2016*"))){
                 If($service.StartType-ne"Automatic"){
                     $text="Configuring service $Name StartupType to: Automatic(Trigger Start)..."
                     Set-Service -Name $service.Name -StartupType Automatic
@@ -1651,7 +1651,7 @@ Begin{
                 $ServiceUptime=Get-ServiceUpTime -Name $Name
                 If($ServiceUptime-ge$Uptime){
                     Try{
-                        #Before restarting the service wait for some known processes to end.  Restarting the service while an app or updates is installing might cause issues.
+                        #Before restarting the service wait for some known processes to end.  Restarting the service while an app or updates is installing might cB01e issues.
                         $Timer=[Diagnostics.Stopwatch]::StartNew()
                         $WaitMinutes=30
                         $ProcessesStopped=$True
@@ -1692,7 +1692,7 @@ Begin{
                 #Error 1290(-2146233087) indicates that the service is sharing a thread with another service that is protected and cannot share its thread.
                 #This is resolved by configuring the service to run on its own thread.
                 If($_.Exception.Hresult-eq'-2146233087'){               
-                    Write-Output "Failed to start service $Name because it's sharing a thread with another process.  Changing to use its own thread."
+                    Write-Output "Failed to start service $Name becB01e it's sharing a thread with another process.  Changing to use its own thread."
                     & cmd /c sc config $Name type=own
                     $ReTryService=$True                    
                 }Else{

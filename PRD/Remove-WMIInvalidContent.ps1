@@ -31,17 +31,17 @@ ForEach($IPv4 In $IP_Address){
     If($Octet_1-eq10){
         If(($Octet_2-eq118)-or($Octet_2-eq119)){
             $SiteServer="w16asccmdb01.inf.utshare.local"
-            $SiteCode="DFW"
+            $SiteCode="A01"
         }
         If(($Octet_2-eq126)-or($Octet_2-eq127)){
             $SiteServer="w16bsccmdb01.inf.utshare.local"
-            $SiteCode="AUS"
+            $SiteCode="B01"
         }
     }
 }
 If(($SiteServer-eq$null)-or($SiteCode-eq$null)){
     Set-Variable -Name SiteServer -Value "w16asccmdb01.inf.utshare.local"
-    Set-Variable -Name SiteCode -Value "DFW"
+    Set-Variable -Name SiteCode -Value "A01"
 }
 Clear-History;Clear-Host
 $Namespace="root\SMS\Site_"+$SiteCode

@@ -2,13 +2,13 @@
 <Configuration>
 	<LocalFiles>C:\ClientHealth</LocalFiles> <!-- Path locally on computer for temporary files and local clienthealth.log if LocalLogFile="True" -->
 	<Client Name="Version">5.00.8740.1031</Client>
-	<Client Name="SiteCode">DFW</Client>
+	<Client Name="SiteCode">A01</Client>
 	<Client Name="Domain">utshare.local</Client>
 	<Client Name="AutoUpgrade">True</Client>
 	<Client Name="Share">\\w16asccmdb01.inf.utshare.local\Clienthealth$\Client</Client>
 	<Client Name="CacheSize" Value="10240" DeleteOrphanedData="True" Enable="True" />
 	<Client Name="Log" MaxLogSize="4096" MaxLogHistory="1" Enable="True" />
-	<ClientInstallProperty>SMSSITECODE=DFW</ClientInstallProperty>
+	<ClientInstallProperty>SMSSITECODE=A01</ClientInstallProperty>
 	<ClientInstallProperty>MP=w16asccmdb01.inf.utshare.local</ClientInstallProperty>
 	<ClientInstallProperty>FSP=w16bsccmdb01.inf.utshare.local</ClientInstallProperty>
 	<ClientInstallProperty>DNSSUFFIX=vdi.utshare.local</ClientInstallProperty>

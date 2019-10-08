@@ -24,8 +24,7 @@ ForEach($IPv4 In $IP_Address){
         Switch($O){
             0{$Octet_1=$Parser[$O];Break}
             1{$Octet_2=$Parser[$O];Break}
-            2{$Octet_3=$Parser[$O];Break}
-            3{$Octet_4=$Parser[$O];Break}
+            Default{Break}
         }
     }
     If($Octet_1-eq10){
@@ -39,7 +38,7 @@ ForEach($IPv4 In $IP_Address){
         }
     }
 }
-If(($SiteServer-eq$null)-or($SiteCode-eq$null)){
+If(!($SiteServer)-or!($SiteCode)){
     Set-Variable -Name SiteServer -Value "w19sccmdba01.inf.utshare.local"
     Set-Variable -Name SiteCode -Value "A01"
 }
@@ -62,7 +61,7 @@ Foreach($DistributionPoint In $DistributionPoints){
         Write-Host "Getting packages from $DistributionPointName ... " -NoNewline
         $CurrentPackageList=@(Get-WMIObject -ComputerName $DistributionPointName -Namespace "root\sccmdp" -Query "Select * from SMS_PackagesInContLib")
         Write-Host([string]($CurrentPackageList.Count)+" packages found.")
-        If(($CurrentPackageList.Count -eq 0)-or($CurrentPackageList-eq$null)){
+        If(($CurrentPackageList.Count -eq 0)-or!($CurrentPackageList)){
             Write-Host "Skipping this distribution point"
         }Else{
             Write-Host "Validating packages on $DistributionPointName ..."
@@ -73,7 +72,7 @@ Foreach($DistributionPoint In $DistributionPoints){
             }Else{
                 Write-Host "Invalid packages on $DistributionPointName :" -ForegroundColor Yellow
                 $InvalidPackages.PackageID
-                $InvalidPackages|Foreach{
+                $InvalidPackages|ForEach-Object{
                     $InvalidPackageID=$_.PackageID
                     Write-Host "Removing invalid package $InvalidPackageID from WMI on $DistributionPointName " -NoNewline
                     Get-WMIObject -ComputerName $DistributionPointName -Namespace "root\sccmdp" -Query ("Select * from SMS_PackagesInContLib where PackageID = '"+([string]($_.PackageID))+"'")|Remove-WmiObject

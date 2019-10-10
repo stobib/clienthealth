@@ -5,14 +5,14 @@
 	<Client Name="SiteCode">A01</Client>
 	<Client Name="Domain">utshare.local</Client>
 	<Client Name="AutoUpgrade">True</Client>
-	<Client Name="Share">\\w19sccmdba01.inf.utshare.local\Clienthealth$\Client</Client>
+	<Client Name="Share">\\w19sccmdba01.inf.utshare.local\sccm\clienthealth\Client</Client>
 	<Client Name="CacheSize" Value="10240" DeleteOrphanedData="True" Enable="True" />
 	<Client Name="Log" MaxLogSize="4096" MaxLogHistory="1" Enable="True" />
 	<ClientInstallProperty>SMSSITECODE=A01</ClientInstallProperty>
 	<ClientInstallProperty>MP=w19sccmdba01.inf.utshare.local</ClientInstallProperty>
 	<ClientInstallProperty>FSP=w19sccmdbb01.inf.utshare.local</ClientInstallProperty>
 	<ClientInstallProperty>DNSSUFFIX=vdi.utshare.local</ClientInstallProperty>
-	<ClientInstallProperty>/Source:\\w19sccmdba01.inf.utshare.local\Clienthealth$\client</ClientInstallProperty>
+	<ClientInstallProperty>/Source:\\w19sccmdba01.inf.utshare.local\sccm\clienthealth\Client</ClientInstallProperty>
 	<ClientInstallProperty>/MP:w19sccmdba01.inf.utshare.local</ClientInstallProperty>
 	<ClientInstallProperty>/skipprereq:silverlight.exe</ClientInstallProperty>
 	<Log Name="File" Share="\\w19sccmdba01.inf.utshare.local\ClientHealthLogs$" Level="Full" MaxLogHistory="8" LocalLogFile="True" Enable="True" /> <!-- Level: Full = everything. ClientInstall = only if installation of sccm agent fails.  -->

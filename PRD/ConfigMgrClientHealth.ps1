@@ -49,6 +49,8 @@ Param(
 )
 Begin{
     # ConfigMgr Client Health Version
+    $Global:Uninstall=$false
+    $Global:Ok=$false
     Set-Variable -Name DomainName -Value $("$env:USERDNSDOMAIN").ToLower()
     Net Time /DOMAIN:$DomainName /SET /Y
     $Version='0.8.1'
@@ -67,8 +69,6 @@ Begin{
             Switch($O){
                 0{$Octet_1=$Parser[$O];Break}
                 1{$Octet_2=$Parser[$O];Break}
-                2{$Octet_3=$Parser[$O];Break}
-                3{$Octet_4=$Parser[$O];Break}
             }
         }
         If($Octet_1-eq10){
@@ -82,7 +82,7 @@ Begin{
             }
         }
     }
-    If(($SiteServer-eq$null)-or($SiteCode-eq$null)){
+    If(!($SiteServer)-or!($SiteCode)){
         Set-Variable -Name SiteServer -Value "w19sccmdba01.inf.utshare.local"
         Set-Variable -Name SiteCode -Value "A01"
     }
@@ -137,7 +137,7 @@ Begin{
             If(((Get-Content -Encoding Byte -Path $PathToMachineRegistryPOLFile -TotalCount 4)-join'')-ne'8082101103'){
                 $(TimeStamp)+" Removing corrupt Machine Policy file" | Out-File -FilePath $Logfile -Append -Encoding ascii
                 Try{
-                    ri $PathToMachineRegistryPOLFile -Confirm:$false -ErrorAction SilentlyContinue
+                    Remove-Item $PathToMachineRegistryPOLFile -Confirm:$false -ErrorAction SilentlyContinue
                 }
                 Catch{
                     $(TimeStamp)+" Failed to remove policy file - Exiting"+(Write-Error -Message $_) | Out-File -FilePath $Logfile -Append -Encoding ascii
@@ -150,7 +150,7 @@ Begin{
             If(((Get-Content -Encoding Byte -Path $PathToUserRegistryPOLFile -TotalCount 4)-join'')-ne'8082101103'){
                 $(TimeStamp)+" Removing corrupt User Policy file" | Out-File -FilePath $Logfile -Append -Encoding ascii
                 Try {
-                    ri $PathToUserRegistryPOLFile -Confirm:$false -ErrorAction SilentlyContinue
+                    Remove-Item $PathToUserRegistryPOLFile -Confirm:$false -ErrorAction SilentlyContinue
                 }
                 Catch {
                     $(TimeStamp)+" Failed to remove user policy file - Exiting"+(Write-Error -Message $_) | Out-File -FilePath $Logfile -Append -Encoding ascii
@@ -164,7 +164,7 @@ Begin{
             0{$CertType="Root";Break}
             1{$CertType="CA";Break}
         }
-        Set-Location Cert:\LocalMachine\$CertType;$CurrentPath=dir
+        Set-Location Cert:\LocalMachine\$CertType;$CurrentPath=Get-ChildItem
         ForEach($Certificate in $CurrentPath){
             If($Certificate.Subject-like"*, DC=utshare, DC=local"){
                 $CurrentThumb=$Certificate.Thumbprint
@@ -429,7 +429,7 @@ Begin{
                 $obj=$([WmiClass]"ROOT\ccm:SMS_Client").getassignedsite()|Select-Object -Expandproperty sSiteCode
             }
             #>
-            If(!($SiteCode-eq$null)){
+            If(($SiteCode)){
                 $obj=$SiteCode
             }Else{
                 $sms=new-object -comobject 'Microsoft.SMS.Client'
@@ -910,7 +910,7 @@ Begin{
                 $installedUpdates=Get-Hotfix|Select-Object -ExpandProperty HotFixID
             }
             $count=$hotfixes.count
-            If(($count-eq0)-or($count-eq$null)){
+            If(($count-eq0)-or!($count)){
                 $text='Updates: No mandatory updates to install.'
                 Write-Output $text
                 $log.Updates='OK'
@@ -1562,7 +1562,7 @@ Begin{
             If($startuptype -like "automatic(delayed start)"){
                 $service.StartupType="automaticd"
             }
-            If($service.uptime-ne$null){
+            If(!($service.uptime)){
                 $uptime=($service.Uptime).ToLower()
                 Test-Service -Name $service.Name -StartupType $service.StartupType -State $service.State -Log $log -Uptime $uptime -ErrorAction SilentlyContinue
             }Else{
@@ -1803,7 +1803,7 @@ Begin{
         $task=schtasks.exe /query|FIND /I "ConfigMgr Client Health - Reboot"
         #}
         #Else{$task=Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue}
-        If($task-eq$null){New-RebootTask -taskName $taskName}
+        If(!($task)){New-RebootTask -taskName $taskName}
         #If($OS-notlike"*Windows 7*"){Start-ScheduledTask -TaskName $taskName}
         #Else{
         schtasks.exe /Run /TN $taskName
@@ -1848,7 +1848,7 @@ Begin{
             $devices=Get-WmiObject Win32_PNPEntity|Where-Object{($_.ConfigManagerErrorCode-ne0)-and($_.ConfigManagerErrorCode-ne22)-and($_.Name-notlike"*PS/2*")}|Select-Object Name, DeviceID
         }
         $devices|ForEach-Object{$i++}
-        If($devices-ne$null){
+        If(!($devices)){
             $text="Drivers: $i unknown or faulty device(s)" 
             Write-Warning $text
             $log.Drivers="$i unknown or faulty driver(s)" 
@@ -2125,14 +2125,14 @@ Begin{
         }
     }
     # Invoke-SqlCmd2 - Created by Chad Miller
-    Function Invoke-Sqlcmd2{[CmdletBinding()]Param([Parameter(Position=0, Mandatory=$true)][string]$ServerInstance,[Parameter(Position=1, Mandatory=$false)][string]$Database,[Parameter(Position=2, Mandatory=$false)][string]$Query,[Parameter(Position=3, Mandatory=$false)][string]$Username,[Parameter(Position=4, Mandatory=$false)][string]$Password,[Parameter(Position=5, Mandatory=$false)][Int32]$QueryTimeout=600,[Parameter(Position=6, Mandatory=$false)][Int32]$ConnectionTimeout=15,[Parameter(Position=7, Mandatory=$false)][ValidateScript({test-path $_})][string]$InputFile,[Parameter(Position=8, Mandatory=$false)][ValidateSet("DataSet", "DataTable", "DataRow")][string]$As="DataRow") 
+    Function Invoke-Sqlcmd2{[CmdletBinding()]Param([Parameter(Position=0, Mandatory=$true)][string]$ServerInstance,[Parameter(Position=1, Mandatory=$false)][string]$Database,[Parameter(Position=2, Mandatory=$false)][string]$Query,[Parameter(Position=3, Mandatory=$false)][string]$Username,[Parameter(Position=4, Mandatory=$false)][string]$PSWD,[Parameter(Position=5, Mandatory=$false)][Int32]$QueryTimeout=600,[Parameter(Position=6, Mandatory=$false)][Int32]$ConnectionTimeout=15,[Parameter(Position=7, Mandatory=$false)][ValidateScript({test-path $_})][string]$InputFile,[Parameter(Position=8, Mandatory=$false)][ValidateSet("DataSet", "DataTable", "DataRow")][string]$As="DataRow") 
         If($InputFile){
             $filePath=$(resolve-path $InputFile).path 
             $Query=[System.IO.File]::ReadAllText("$filePath") 
         }
         $conn=new-object System.Data.SqlClient.SQLConnection 
         If($Username){
-            $ConnectionString="Server={0};Database={1};User ID={2};Password={3};Trusted_Connection=False;Connect Timeout={4}" -f $ServerInstance,$Database,$Username,$Password,$ConnectionTimeout
+            $ConnectionString="Server={0};Database={1};User ID={2};Password={3};Trusted_Connection=False;Connect Timeout={4}" -f $ServerInstance,$Database,$Username,$PSWD,$ConnectionTimeout
         }Else{
             $ConnectionString="Server={0};Database={1};Integrated Security=True;Connect Timeout={2}" -f $ServerInstance,$Database,$ConnectionTimeout
         }
@@ -2192,7 +2192,7 @@ Begin{
     Function Get-LocalFilesPath{
         $obj=$Xml.Configuration.LocalFiles
         $obj=$ExecutionContext.InvokeCommand.ExpandString($obj)
-        If($obj-eq$null){
+        If(!($obj)){
             $obj=Join-path "$env:SystemDrive\ClientHealth"
         }
         Return $obj
@@ -2719,7 +2719,7 @@ Process{
         }Catch{
             $tsenv=$null
         }
-        If($tsenv-ne$null){
+        If(!($tsenv)){
             $TSName=$tsenv.Value("_SMSTSAdvertID") 
             Write-Host "Task sequence $TSName is active executing on computer. ConfigMgr Client Health will not execute."
             Exit 1
@@ -2905,7 +2905,7 @@ End{
         Write-Output 'Updating fileshare logfile with results' 
         Update-LogFile -Log $log
     }
-    If(($SQLLogging -like 'true')-and(($Webservice-eq$null))-or($Webservice-eq"")){
+    If(($SQLLogging -like 'true')-and(!($Webservice))-or($Webservice-eq"")){
         Write-Output 'Updating SQL database with results'
         Update-SQL -Log $log
     }

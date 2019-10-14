@@ -17,6 +17,7 @@
     Assisted by Stijn Callebaut
 #>
 #param([parameter(Mandatory=$true)][string]$SiteServer,[parameter(Mandatory=$true)][string]$SiteCode)
+Clear-History;Clear-Host
 Set-Variable -Name IP_Address -Value ((ipconfig|findstr [0-9].\.)[0]).Split()[-1]
 ForEach($IPv4 In $IP_Address){
     $Parser=$IPv4.Split(".")
@@ -42,8 +43,8 @@ If(!($SiteServer)-or!($SiteCode)){
     Set-Variable -Name SiteServer -Value "w19sccmdba01.inf.utshare.local"
     Set-Variable -Name SiteCode -Value "A01"
 }
-Clear-History;Clear-Host
 $Namespace="root\SMS\Site_"+$SiteCode
+Write-Host ("Site Server: ["+$SiteServer+"]`t Namespace: ["+$Namespace+"]")
 Write-Host "Getting all valid packages... " -NoNewline
 $ValidPackages=Get-WMIObject -ComputerName $SiteServer -Namespace $Namespace -Query "Select * from SMS_ObjectContentExtraInfo"
 Write-Host ([string]($ValidPackages.count)+" packages found.")

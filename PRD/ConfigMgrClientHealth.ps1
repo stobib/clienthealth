@@ -87,6 +87,7 @@ Begin{
         Set-Variable -Name SiteServer -Value "w19sccmdba01.inf.utshare.local"
         Set-Variable -Name SiteCode -Value "A01"
     }
+    Write-Host ("Site Server: ["+$SiteServer+"]`t Site Code: ["+$SiteCode+"]")
     Set-Location -Path "$env:SystemRoot\System32"
     If(!(Test-Path "$env:SystemRoot\System32\cmtrace.exe")){
         Copy-Item -Path "\\$SiteServer\sources\apps\cmtrace.exe"

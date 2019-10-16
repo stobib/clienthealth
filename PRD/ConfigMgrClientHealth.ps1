@@ -50,6 +50,7 @@ Param(
 Begin{
     # ConfigMgr Client Health Version
     $Global:Uninstall=$false
+    $Global:CfgFile=$null
     $Global:Ok=$false
     Set-Variable -Name DomainName -Value $("$env:USERDNSDOMAIN").ToLower()
     Net Time /DOMAIN:$DomainName /SET /Y
@@ -57,7 +58,6 @@ Begin{
     $PowerShellVersion=[int]$PSVersionTable.PSVersion.Major
     $global:ScriptPath=split-path -parent $MyInvocation.MyCommand.Definition
     #If no config file was passed in, use the default.
-    If(!$Config){$Config=Join-Path($global:ScriptPath) "Config.xml"}
     Write-Verbose "Script version: $Version"
     Write-Verbose "PowerShell version: $PowerShellVersion"
     Enable-PSRemoting -Force -ErrorAction SilentlyContinue
@@ -74,17 +74,20 @@ Begin{
         }
         If($Octet_1-eq10){
             If(($Octet_2-eq118)-or($Octet_2-eq119)){
-                $SiteServer="w19sccmdba01.inf.utshare.local"
+                $SiteServer="w19sccmmpa01.inf.utshare.local"
                 $SiteCode="A01"
+				$CfgFile="ConfigA.xml"
             }
             If(($Octet_2-eq126)-or($Octet_2-eq127)){
-                $SiteServer="w19sccmdbb01.inf.utshare.local"
+                $SiteServer="w19sccmmpb01.inf.utshare.local"
                 $SiteCode="B01"
+				$CfgFile="ConfigB.xml"
             }
         }
     }
+    If(!$Config){$Config=Join-Path($global:ScriptPath) $CfgFile}
     If(!($SiteServer)-or!($SiteCode)){
-        Set-Variable -Name SiteServer -Value "w19sccmdba01.inf.utshare.local"
+        Set-Variable -Name SiteServer -Value "w19sccmmpa01.inf.utshare.local"
         Set-Variable -Name SiteCode -Value "A01"
     }
     Write-Host ("Site Server: ["+$SiteServer+"]`t Site Code: ["+$SiteCode+"]")

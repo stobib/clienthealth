@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Configuration>
 	<LocalFiles>C:\ClientHealth</LocalFiles> <!-- Path locally on computer for temporary files and local clienthealth.log if LocalLogFile="True" -->
-	<Client Name="Version">5.00.8740.1031</Client>
+	<Client Name="Version">5.00.8853.1000</Client>
 	<Client Name="SiteCode">A01</Client>
 	<Client Name="Domain">utshare.local</Client>
 	<Client Name="AutoUpgrade">True</Client>
@@ -10,13 +10,13 @@
 	<Client Name="Log" MaxLogSize="4096" MaxLogHistory="1" Enable="True" />
 	<ClientInstallProperty>SMSSITECODE=A01</ClientInstallProperty>
 	<ClientInstallProperty>MP=w19sccmmpa01.inf.utshare.local</ClientInstallProperty>
-	<ClientInstallProperty>FSP=w19sccmdbb01.inf.utshare.local</ClientInstallProperty>
+	<ClientInstallProperty>FSP=w19sccmdpa01.inf.utshare.local</ClientInstallProperty>
 	<ClientInstallProperty>DNSSUFFIX=vdi.utshare.local</ClientInstallProperty>
 	<ClientInstallProperty>/Source:\\w19sccmmpa01.inf.utshare.local\sccm\clienthealth\Client</ClientInstallProperty>
 	<ClientInstallProperty>/MP:w19sccmmpa01.inf.utshare.local</ClientInstallProperty>
 	<ClientInstallProperty>/skipprereq:silverlight.exe</ClientInstallProperty>
 	<Log Name="File" Share="\\w19sccmmpa01.inf.utshare.local\ClientHealthLogs$" Level="Full" MaxLogHistory="8" LocalLogFile="True" Enable="True" /> <!-- Level: Full = everything. ClientInstall = only if installation of sccm agent fails.  -->
-	<Log Name="SQL" Server="w19sccmmpa01.inf.utshare.local" Enable="True" />
+	<Log Name="SQL" Server="w19sccmdba01.inf.utshare.local" Enable="True" />
 	<Log Name="Time" Format="ClientLocal" /> <!-- Valid formats: ClientLocal / UTC  -->
 	<Option Name="CcmSQLCELog" Enable="False" /> <!-- Optional check on the ConfigMgr agent if local database is corrupt -->
 	<Option Name="BITSCheck" Fix="True" Enable="True" />

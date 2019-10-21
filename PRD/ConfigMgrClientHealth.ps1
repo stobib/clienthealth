@@ -327,7 +327,7 @@ Begin {
         if ($mode -like "ClientInstall" ) { $text = "ConfigMgr Client installation failed. Agent not detected 10 minutes after triggering installation." }
         
         $obj = '[' +(Get-DateTime) +'] '+$text
-        $obj | Out-File -Encoding utf8 -Append $logFile
+        $obj | Out-File -FilePath $logFile -Encoding utf8 -Append
     }
 
     Function Get-OperatingSystem {
@@ -1278,7 +1278,7 @@ Begin {
         # Check 1 - Error in WUAHandler.log
         Write-Verbose "Check WUAHandler.log for errors since $($StartTime)."
         $logdir = Get-CCMLogDirectory
-        If(!($logdir)-or($logdir-eq"")-or($logdir=eq$env:SystemDrive)){
+        If(!($logdir)-or($logdir -eq "")-or($logdir -like ($env:SystemDrive+"*"))){
             $logdir=($env:SystemRoot+"\CCM\Logs")
         }
         $logfile = "$logdir\WUAHandler.log"

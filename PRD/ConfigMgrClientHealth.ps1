@@ -1278,6 +1278,9 @@ Begin {
         # Check 1 - Error in WUAHandler.log
         Write-Verbose "Check WUAHandler.log for errors since $($StartTime)."
         $logdir = Get-CCMLogDirectory
+        If(!($logdir)-or($logdir="")){
+            $logdir=($env:SystemRoot+"\CCM\Logs")
+        }
         $logfile = "$logdir\WUAHandler.log"
         $logLine = Search-CMLogFile -LogFile $logfile -StartTime $StartTime -SearchStrings @('0x80004005','0x87d00692')
         if ($logLine) {$RepairReason = "WUAHandler Log"}

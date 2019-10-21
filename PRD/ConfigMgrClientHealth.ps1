@@ -325,9 +325,13 @@ Begin {
         else { $Logfile = Get-LogFileName }
 
         if ($mode -like "ClientInstall" ) { $text = "ConfigMgr Client installation failed. Agent not detected 10 minutes after triggering installation." }
-        
-        $obj = '[' +(Get-DateTime) +'] '+$text
-        $obj | Out-File -FilePath $logFile -Encoding utf8 -Append
+        try{
+            $obj = '[' +(Get-DateTime) +'] '+$text
+            $obj | Out-File -FilePath $Logfile -Encoding utf8 -Append
+        }catch{
+            $obj | Out-File -FilePath "$clientpath\ClientHealth.log" -Encoding utf8 -Append
+            $error.Clear()
+        }
     }
 
     Function Get-OperatingSystem {

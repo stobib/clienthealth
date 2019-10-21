@@ -21,7 +21,7 @@ Clear-History;Clear-Host
 Set-Variable -Name IP_Address -Value ((ipconfig|findstr [0-9].\.)[0]).Split()[-1]
 ForEach($IPv4 In $IP_Address){
     $Parser=$IPv4.Split(".")
-    For($O=0;$O-le3;$O++){
+    For($O=0;$O-le1;$O++){
         Switch($O){
             0{$Octet_1=$Parser[$O];Break}
             1{$Octet_2=$Parser[$O];Break}

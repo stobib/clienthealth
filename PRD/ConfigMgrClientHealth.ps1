@@ -932,7 +932,7 @@ Begin {
                 
             $count = $hotfixes.count
 
-            if (($count -eq 0) -or ($count -eq $null)) {
+            if (($count -eq 0) -or ($null -eq $count)) {
                 $text = 'Updates: No mandatory updates to install.'
                 Write-Output $text
                 $log.Updates = 'OK'
@@ -1669,7 +1669,7 @@ Begin {
             
             if ($startuptype -like "automatic (delayed start)") { $service.StartupType = "automaticd" }
             
-            if ($service.uptime -ne $null) {
+            if ($null -eq $service.uptime) {
                 $uptime = ($service.Uptime).ToLower()
                 Test-Service -Name $service.Name -StartupType $service.StartupType -State $service.State -Log $log -Uptime $uptime
             }
@@ -1949,7 +1949,7 @@ Begin {
             $task = schtasks.exe /query | FIND /I "ConfigMgr Client Health - Reboot"
         #}
         #else { $task = Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue }
-        if ($task -eq $null) { New-RebootTask -taskName $taskName }
+        if ($null -eq $task) { New-RebootTask -taskName $taskName }
         #if ($OS -notlike "*Windows 7*") {Start-ScheduledTask -TaskName $taskName }
         #else {
             schtasks.exe /Run /TN $taskName
@@ -1997,7 +1997,7 @@ Begin {
         else { $devices = Get-WmiObject Win32_PNPEntity | Where-Object{ ($_.ConfigManagerErrorCode -ne 0) -and ($_.ConfigManagerErrorCode -ne 22) -and ($_.Name -notlike "*PS/2*") } | Select-Object Name, DeviceID }
         $devices | ForEach-Object {$i++} 
 
-        if ($devices -ne $null) {
+        if ($null -ne $devices) {
             $text = "Drivers: $i unknown or faulty device(s)" 
             Write-Warning $text
             $log.Drivers = "$i unknown or faulty driver(s)" 
@@ -2365,7 +2365,7 @@ Begin {
     Function Get-LocalFilesPath {
         $obj = $Xml.Configuration.LocalFiles
         $obj=$ExecutionContext.InvokeCommand.ExpandString($obj)
-        if ($obj -eq $null) { $obj = Join-path $env:SystemDrive "ClientHealth" }
+        if ($null -eq $obj) { $obj = Join-path $env:SystemDrive "ClientHealth" }
         Return $obj
     }
     
